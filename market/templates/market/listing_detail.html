@@ -1,0 +1,50 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}{{ listing.title }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="wrap">
+    <a class="small" href="{% url 'listing_list' %}">← ወደ ዝርዝሮች</a>
+    <div class="two-col" style="margin-top:1rem">
+      <div class="stack">
+        <div class="big-image">
+          {% if listing.image %}<img src="{{ listing.image.url }}" alt="{{ listing.title }}">{% else %}<span aria-hidden="true">{{ listing.service.icon }}</span>{% endif %}
+        </div>
+        <div class="card pad">
+          <h3>መግለጫ</h3>
+          <p style="margin:0">{{ listing.description|default:"ተጨማሪ መግለጫ የለም።"|linebreaksbr }}</p>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card pad">
+          <span class="tag {{ listing.deal_type }}">{{ listing.get_deal_type_display }}</span>
+          <h1 style="font-size:1.6rem;margin-top:.6rem">{{ listing.title }}</h1>
+          <div class="price" style="font-size:1.8rem">
+            {% if listing.price %}{{ listing.price|floatformat:0|intcomma }} ብር{% else %}ዋጋ ይጠይቁ{% endif %}
+            {% if listing.price_note %}<small>{{ listing.price_note }}</small>{% endif %}
+          </div>
+          <dl class="kv" style="margin-top:1rem">
+            <dt>ዓይነት</dt><dd>{{ listing.service.name }}</dd>
+            {% if listing.location %}<dt>አድራሻ</dt><dd>{{ listing.location }}</dd>{% endif %}
+            <dt>የወጣበት ቀን</dt><dd>{{ listing.created_at|date:"d/m/Y" }}</dd>
+          </dl>
+        </div>
+        <div class="card pad">
+          <h3>ለመገናኘት</h3>
+          {% if listing.contact_name %}<p style="margin:0 0 .5rem">{{ listing.contact_name }}</p>{% endif %}
+          {% if listing.contact_phone %}
+            <a class="btn btn-primary btn-block" href="tel:{{ listing.contact_phone }}">📞 {{ listing.contact_phone }}</a>
+          {% else %}
+            <p class="muted small" style="margin:0">የስልክ ቁጥር አልተሞላም።</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if related %}
+    <div class="section-head" style="margin-top:3rem"><h2>ተመሳሳይ ዝርዝሮች</h2></div>
+    <div class="grid grid-3">{% for l in related %}{% include "market/_listing_card.html" %}{% endfor %}</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

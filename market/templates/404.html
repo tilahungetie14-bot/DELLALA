@@ -1,0 +1,10 @@
+{% extends "market/base.html" %}
+{% block title %}ገጹ አልተገኘም{% endblock %}
+{% block content %}
+<section class="section"><div class="narrow"><div class="card empty">
+  <div class="ico">🧭</div>
+  <h1 style="font-size:1.6rem">ገጹ አልተገኘም</h1>
+  <p>የፈለጉት ገጽ የለም ወይም ተወግዷል።</p>
+  <a class="btn btn-dark" href="{% url 'home' %}">ወደ ዋና ገጽ</a>
+</div></div></section>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}ቤት፣ መኪና እና እቃዎች{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>ለመሸጥም ለመግዛትም፣ ደላላው አለ።</h1>
+      <p class="lead">ቤት፣ መኪና ወይም ማንኛውንም እቃ ለመሸጥ፣ ለማከራየት ወይም ለመፈለግ ጥያቄዎን ይላኩ። የአገልግሎት ክፍያውን በቴሌብር ወይም በባንክ ይክፈሉ፤ እኛ ተስማሚውን ሰው እናገናኝዎታለን።</p>
+      <div class="row">
+        {% if user.is_authenticated %}
+          <a class="btn btn-primary" href="{% url 'dashboard' %}">አገልግሎት ምረጥ</a>
+        {% else %}
+          <a class="btn btn-primary" href="{% url 'register' %}">አካውንት ክፈት</a>
+          <a class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" href="{% url 'login' %}">ግባ</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="hero-card">
+      <h3>እንዴት ይሰራል?</h3>
+      <ol class="steps">
+        <li><div><b>ይመዝገቡ</b><span class="muted small">በስልክ ቁጥርዎ አካውንት ይክፈቱ።</span></div></li>
+        <li><div><b>አገልግሎት ይምረጡ</b><span class="muted small">የሚሸጡትን ወይም የሚፈልጉትን ዝርዝር ያስገቡ።</span></div></li>
+        <li><div><b>ክፍያ ይፈጽሙ</b><span class="muted small">ቴሌብር ወይም የባንክ አማራጭ ይምረጡ።</span></div></li>
+        <li><div><b>ደላላው ያገናኝዎታል</b><span class="muted small">ጥያቄዎ ተረጋግጦ ዝርዝሩ ይወጣል።</span></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+<div class="tibeb" aria-hidden="true"></div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><h2>አገልግሎቶቻችን</h2></div>
+    <div class="grid grid-svc">
+      {% for s in services %}
+      <a class="svc" href="{% url 'request_new' s.slug %}">
+        <div class="ico" aria-hidden="true">{{ s.icon }}</div>
+        <h3>{{ s.name }}</h3>
+        <p>{{ s.description }}</p>
+        <span class="fee">{% if s.fee %}{{ s.fee|floatformat:0|intcomma }} ብር የአገልግሎት ክፍያ{% else %}ነፃ{% endif %}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>አዳዲስ ዝርዝሮች</h2>
+      <a href="{% url 'listing_list' %}">ሁሉንም ዝርዝሮች ይመልከቱ</a>
+    </div>
+    {% if latest %}
+      <div class="grid grid-3">{% for l in latest %}{% include "market/_listing_card.html" %}{% endfor %}</div>
+    {% else %}
+      <div class="card empty"><div class="ico">🏷️</div><p>እስካሁን የወጣ ዝርዝር የለም። በቅርቡ ይመለሱ።</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

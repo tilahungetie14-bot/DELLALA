@@ -1,0 +1,32 @@
+{% extends "market/base.html" %}
+{% block title %}{% if listing %}ዝርዝር አስተካክል{% else %}አዲስ ዝርዝር{% endif %}{% endblock %}
+{% block content %}
+{% include "market/_panel_nav.html" %}
+<section class="section">
+  <div class="mid">
+    <a class="small" href="{% url 'panel_listings' %}">← ወደ ዝርዝሮች</a>
+    <h1 style="font-size:1.9rem;margin-top:.5rem">{% if listing %}ዝርዝር አስተካክል{% else %}አዲስ ዝርዝር ጨምር{% endif %}</h1>
+    {% if source %}
+      <div class="amount-box" style="margin-bottom:1rem"><span>ከጥያቄ <b>#{{ source.pk }}</b> ({{ source.user.first_name|default:source.user.username }}) የተሞላ</span>
+      {% if source.image %}<span class="small muted">የደንበኛው ፎቶ ካልቀየሩ ይቀመጣል</span>{% endif %}</div>
+    {% endif %}
+    <div class="card pad">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-error">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+          {% include "market/_field.html" %}
+          {% if field.name == 'image' and listing and listing.image %}
+            <p class="small muted" style="margin:-.6rem 0 1rem">አሁን ያለው ፎቶ፦</p>
+            <img class="proof" style="max-height:160px;margin:-.4rem 0 1rem" src="{{ listing.image.url }}" alt="">
+          {% endif %}
+        {% endfor %}
+        <div class="row">
+          <button class="btn btn-dark" type="submit">አስቀምጥ</button>
+          <a class="btn btn-ghost" href="{% url 'panel_listings' %}">ተው</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

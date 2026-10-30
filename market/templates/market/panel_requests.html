@@ -1,0 +1,48 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}ጥያቄዎች{% endblock %}
+{% block content %}
+{% include "market/_panel_nav.html" %}
+<section class="section">
+  <div class="wrap">
+    <h1 style="font-size:1.9rem">የደንበኞች ጥያቄዎች</h1>
+    <form class="filters" method="get" style="margin-top:1rem">
+      <input class="input grow" type="search" name="q" value="{{ q }}" placeholder="ፈልግ፦ ርዕስ፣ ስም፣ ስልክ ወይም የግብይት ቁጥር">
+      <select class="input" name="status" aria-label="የጥያቄ ሁኔታ">
+        <option value="">ሁሉም ሁኔታ</option>
+        {% for val, label in statuses %}<option value="{{ val }}" {% if val == status_sel %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <select class="input" name="payment" aria-label="የክፍያ ሁኔታ">
+        <option value="">ሁሉም ክፍያ</option>
+        {% for val, label in pay_statuses %}<option value="{{ val }}" {% if val == pay_sel %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-dark" type="submit">አጣራ</button>
+    </form>
+
+    {% if page.object_list %}
+    <div class="card table-wrap">
+      <table class="data">
+        <thead><tr><th>#</th><th>ርዕስ</th><th>ደንበኛ</th><th>አገልግሎት</th><th>ፍላጎት</th><th>ክፍያ</th><th>ሁኔታ</th><th>ቀን</th></tr></thead>
+        <tbody>
+        {% for req in page.object_list %}
+          <tr>
+            <td class="muted">{{ req.pk }}</td>
+            <td><a class="rowlink" href="{% url 'panel_request_detail' req.pk %}">{{ req.title }}</a></td>
+            <td>{{ req.user.first_name|default:req.user.username }}<br><span class="muted small">{{ req.contact_phone }}</span></td>
+            <td>{{ req.service.name }}</td>
+            <td>{{ req.get_intent_display }}</td>
+            <td><span class="badge {{ req.payment_status }}">{{ req.get_payment_status_display }}</span></td>
+            <td>{% include "market/_status.html" %}</td>
+            <td class="muted small">{{ req.created_at|date:"d/m/Y" }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "market/_pager.html" %}
+    {% else %}
+    <div class="card empty"><div class="ico">🔍</div><p>ምንም ጥያቄ አልተገኘም።</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

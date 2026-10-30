@@ -1,0 +1,53 @@
+{% load static %}<!doctype html>
+<html lang="am">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ደላላ{% endblock %} · ደላላ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=Noto+Serif+Ethiopic:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'market/css/style.css' %}">
+</head>
+<body>
+{% with url=request.resolver_match.url_name %}
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="{% url 'home' %}">ደላ<span>ላ</span></a>
+    <nav class="nav" aria-label="ዋና ማውጫ">
+      <a href="{% url 'home' %}" {% if url == 'home' %}class="active"{% endif %}>ዋና ገጽ</a>
+      <a href="{% url 'listing_list' %}" {% if url == 'listing_list' or url == 'listing_detail' %}class="active"{% endif %}>ዝርዝሮች</a>
+      {% if user.is_authenticated %}
+        {% if user.is_staff %}
+          <a href="{% url 'panel_dashboard' %}" {% if 'panel' in url %}class="active"{% endif %}>የደላላ ፓነል</a>
+        {% else %}
+          <a href="{% url 'dashboard' %}" {% if url == 'dashboard' %}class="active"{% endif %}>የእኔ ገጽ</a>
+        {% endif %}
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="linklike" type="submit">ውጣ ({{ user.first_name|default:user.username }})</button></form>
+      {% else %}
+        <a href="{% url 'login' %}" {% if url == 'login' %}class="active"{% endif %}>ግባ</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'register' %}">ተመዝገብ</a>
+      {% endif %}
+    </nav>
+  </div>
+  <div class="tibeb" aria-hidden="true"></div>
+</header>
+{% endwith %}
+
+{% if messages %}
+<ul class="messages" role="status">
+  {% for m in messages %}<li class="{{ m.tags }}">{{ m }}</li>{% endfor %}
+</ul>
+{% endif %}
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="site-footer">
+  <div class="tibeb" aria-hidden="true"></div>
+  <div class="wrap">
+    <a class="brand" href="{% url 'home' %}">ደላላ</a>
+    <span>ቤት፣ መኪና እና ልዩ ልዩ እቃዎች — ሻጭና ገዢን የምናገናኝ ታማኝ ደላላ።</span>
+  </div>
+</footer>
+</body>
+</html>

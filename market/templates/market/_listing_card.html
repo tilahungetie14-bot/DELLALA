@@ -1,0 +1,15 @@
+{% load humanize %}
+<a class="card listing" href="{% url 'listing_detail' l.pk %}">
+  <div class="thumb">
+    {% if l.image %}<img src="{{ l.image.url }}" alt="{{ l.title }}" loading="lazy">{% else %}<span aria-hidden="true">{{ l.service.icon }}</span>{% endif %}
+    <span class="tag {{ l.deal_type }}">{{ l.get_deal_type_display }}</span>
+  </div>
+  <div class="body">
+    <h3>{{ l.title }}</h3>
+    <div class="muted small">{{ l.service.name }}{% if l.location %} · {{ l.location }}{% endif %}</div>
+    <div class="price" style="margin-top:auto">
+      {% if l.price %}{{ l.price|floatformat:0|intcomma }} ብር{% else %}ዋጋ ይጠይቁ{% endif %}
+      {% if l.price_note %}<small>{{ l.price_note }}</small>{% endif %}
+    </div>
+  </div>
+</a>

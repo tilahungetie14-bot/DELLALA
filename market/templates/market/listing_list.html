@@ -1,0 +1,28 @@
+{% extends "market/base.html" %}
+{% block title %}ዝርዝሮች{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="wrap">
+    <h1 style="font-size:1.9rem">ሁሉም ዝርዝሮች</h1>
+    <form class="filters" method="get">
+      <input class="input grow" type="search" name="q" value="{{ q }}" placeholder="ፈልግ፦ ርዕስ ወይም አድራሻ">
+      <select class="input" name="service" aria-label="ዓይነት">
+        <option value="">ሁሉም ዓይነት</option>
+        {% for s in services %}<option value="{{ s.slug }}" {% if s.slug == service_sel %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+      </select>
+      <select class="input" name="deal" aria-label="ሽያጭ ወይም ኪራይ">
+        <option value="">ሽያጭ እና ኪራይ</option>
+        {% for val, label in deals %}<option value="{{ val }}" {% if val == deal_sel %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-dark" type="submit">ፈልግ</button>
+    </form>
+
+    {% if page.object_list %}
+      <div class="grid grid-3">{% for l in page.object_list %}{% include "market/_listing_card.html" %}{% endfor %}</div>
+      {% include "market/_pager.html" %}
+    {% else %}
+      <div class="card empty"><div class="ico">🔍</div><p>ምንም ዝርዝር አልተገኘም። ፍለጋውን ይለውጡ።</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

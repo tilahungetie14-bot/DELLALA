@@ -1,0 +1,13 @@
+<div class="field">
+  {% if field.widget_type == 'checkbox' %}
+    <label class="row" for="{{ field.id_for_label }}" style="font-weight:600">{{ field }} {{ field.label }}</label>
+  {% elif field.widget_type == 'radioselect' %}
+    <label style="display:block;font-weight:600;margin-bottom:.3rem;color:var(--abay)">{{ field.label }}</label>
+    <div class="choice-grid">{{ field }}</div>
+  {% else %}
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+  {% endif %}
+  {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
+  {{ field.errors }}
+</div>

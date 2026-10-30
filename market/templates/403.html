@@ -1,0 +1,10 @@
+{% extends "market/base.html" %}
+{% block title %}ፈቃድ የለም{% endblock %}
+{% block content %}
+<section class="section"><div class="narrow"><div class="card empty">
+  <div class="ico">🔒</div>
+  <h1 style="font-size:1.6rem">ይህን ገጽ ለማየት ፈቃድ የለዎትም</h1>
+  <p>ይህ ገጽ ለደላላ አስተዳዳሪዎች ብቻ ነው።</p>
+  <a class="btn btn-dark" href="{% url 'home' %}">ወደ ዋና ገጽ</a>
+</div></div></section>
+{% endblock %}

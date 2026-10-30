@@ -1,0 +1,58 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}ክፍያ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="mid">
+    <a class="small" href="{% url 'dashboard' %}">← ወደ የእኔ ገጽ</a>
+    <h1 style="font-size:1.9rem;margin-top:.5rem">የአገልግሎት ክፍያ</h1>
+    <p class="muted">ጥያቄ፦ <b>{{ req.title }}</b> ({{ req.service.name }})</p>
+
+    {% if req.payment_status == 'rejected' %}
+      <div class="form-error">ያስገቡት ክፍያ ሊረጋገጥ አልቻለም። {% if req.admin_note %}{{ req.admin_note }}{% endif %} እባክዎ መረጃውን አስተካክለው እንደገና ይላኩ።</div>
+    {% endif %}
+
+    <div class="amount-box" style="margin-bottom:1.5rem">
+      <span>መክፈል ያለብዎት</span>
+      <span class="price">{{ req.fee_amount|floatformat:0|intcomma }} ብር</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate class="stack">
+      {% csrf_token %}
+      <div>
+        <h3>1. የክፍያ አማራጭ ይምረጡ</h3>
+        {% if not methods %}
+          <div class="form-error">የክፍያ አማራጭ ገና አልተዘጋጀም። እባክዎ ደላላውን ያነጋግሩ።</div>
+        {% endif %}
+        <div class="pay-list">
+          {% for m in methods %}
+          <label class="pay">
+            <input type="radio" name="payment_method" value="{{ m.pk }}" {% if form.payment_method.value|stringformat:"s" == m.pk|stringformat:"s" %}checked{% endif %}>
+            <span class="box" style="--c: {{ m.color }}">
+              <span class="bar"></span>
+              <span>
+                <b>{{ m.name }}</b>
+                <span class="acc">{{ m.account_number }}</span>
+                <span class="muted small"> · {{ m.account_name }}</span>
+              </span>
+              <span class="tick" aria-hidden="true">✓</span>
+              {% if m.instructions %}<span class="note">{{ m.instructions }}</span>{% endif %}
+            </span>
+          </label>
+          {% endfor %}
+        </div>
+        {{ form.payment_method.errors }}
+      </div>
+
+      <div class="card pad">
+        <h3>2. ከከፈሉ በኋላ ያስገቡ</h3>
+        {% include "market/_field.html" with field=form.payment_ref %}
+        {% include "market/_field.html" with field=form.payment_proof %}
+      </div>
+
+      <button class="btn btn-dark" type="submit">ክፍያ መፈጸሜን አሳውቅ</button>
+      <p class="small muted">ደላላው የግብይት ቁጥሩን አረጋግጦ ጥያቄዎን ወደ ሂደት ያስገባል። ሁኔታውን በ«የእኔ ገጽ» ላይ ይከታተሉ።</p>
+    </form>
+  </div>
+</section>
+{% endblock %}

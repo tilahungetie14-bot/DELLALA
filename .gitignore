@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# Django / local data
+db.sqlite3
+db.sqlite3-*
+media/
+staticfiles/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+db_backup_20261030.sqlite3
+media_backup_20261030/

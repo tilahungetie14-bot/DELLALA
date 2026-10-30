@@ -1,0 +1,50 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}{{ req.title }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="wrap">
+    <a class="small" href="{% url 'dashboard' %}">← ወደ የእኔ ገጽ</a>
+    <h1 style="font-size:1.9rem;margin-top:.5rem">{{ req.title }}</h1>
+    <div class="two-col" style="margin-top:1.2rem">
+      <div class="card pad">
+        <dl class="kv">
+          <dt>አገልግሎት</dt><dd>{{ req.service.icon }} {{ req.service.name }}</dd>
+          <dt>ፍላጎት</dt><dd>{{ req.get_intent_display }}</dd>
+          <dt>ዋጋ / በጀት</dt><dd>{% if req.price %}{{ req.price|floatformat:0|intcomma }} ብር{% else %}—{% endif %}</dd>
+          <dt>አድራሻ</dt><dd>{{ req.location|default:"—" }}</dd>
+          <dt>ስልክ</dt><dd>{{ req.contact_phone }}</dd>
+          <dt>የተላከበት ቀን</dt><dd>{{ req.created_at|date:"d/m/Y H:i" }}</dd>
+          {% if req.description %}<dt>መግለጫ</dt><dd>{{ req.description|linebreaksbr }}</dd>{% endif %}
+        </dl>
+        {% if req.image %}<img class="proof" style="margin-top:1rem;max-height:320px" src="{{ req.image.url }}" alt="{{ req.title }}">{% endif %}
+      </div>
+
+      <div class="stack">
+        <div class="card pad">
+          <h3>የጥያቄው ሂደት</h3>
+          <ul class="timeline">
+            <li class="done"><b>ጥያቄ ተላከ</b></li>
+            <li class="{% if req.payment_status == 'verified' %}done{% elif req.payment_status == 'rejected' %}bad{% else %}now{% endif %}">
+              <b>ክፍያ</b><br><span class="badge {{ req.payment_status }}">{{ req.get_payment_status_display }}</span>
+              {% if req.can_pay %}<br><a class="btn btn-primary btn-sm" style="margin-top:.5rem" href="{% url 'request_pay' req.pk %}">አሁን ክፈል ({{ req.fee_amount|floatformat:0|intcomma }} ብር)</a>{% endif %}
+            </li>
+            <li class="{% if req.status == 'approved' or req.status == 'completed' %}done{% elif req.status == 'rejected' %}bad{% else %}now{% endif %}">
+              <b>የደላላው ውሳኔ</b><br>{% include "market/_status.html" %}
+            </li>
+          </ul>
+        </div>
+        {% if req.admin_note %}
+        <div class="card pad"><h3>ከደላላው የተላከ መልዕክት</h3><p style="margin:0">{{ req.admin_note|linebreaksbr }}</p></div>
+        {% endif %}
+        {% if req.payment_method %}
+        <div class="card pad small">
+          <b>የከፈሉበት፦</b> {{ req.payment_method.name }}<br>
+          <b>የግብይት ቁጥር፦</b> {{ req.payment_ref }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}{{ service.name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="mid">
+    <a class="small" href="{% url 'dashboard' %}">← ወደ አገልግሎቶች</a>
+    <h1 style="font-size:1.9rem;margin-top:.5rem">{{ service.icon }} {{ service.name }}</h1>
+    <p class="muted">ዝርዝሩን ይሙሉ። ከላኩ በኋላ ወደ ክፍያ ገጽ ይወሰዳሉ{% if service.fee %} (የአገልግሎት ክፍያ፦ <b>{{ service.fee|floatformat:0|intcomma }} ብር</b>){% endif %}።</p>
+    <div class="card pad">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-error">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}{% include "market/_field.html" %}{% endfor %}
+        <button class="btn btn-dark" type="submit">ጥያቄ ላክ</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

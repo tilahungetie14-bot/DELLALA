@@ -1,0 +1,45 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}ዝርዝሮች (ፓነል){% endblock %}
+{% block content %}
+{% include "market/_panel_nav.html" %}
+<section class="section">
+  <div class="wrap">
+    <div class="row between" style="margin-bottom:1rem">
+      <h1 style="font-size:1.9rem;margin:0">የድረ-ገጹ ዝርዝሮች</h1>
+      <a class="btn btn-primary" href="{% url 'panel_listing_new' %}">+ አዲስ ዝርዝር</a>
+    </div>
+    <form class="filters" method="get">
+      <input class="input grow" type="search" name="q" value="{{ q }}" placeholder="ፈልግ፦ ርዕስ፣ አድራሻ ወይም የባለቤት ስም">
+      <button class="btn btn-dark" type="submit">ፈልግ</button>
+    </form>
+
+    {% if page.object_list %}
+    <div class="card table-wrap">
+      <table class="data">
+        <thead><tr><th></th><th>ርዕስ</th><th>ዓይነት</th><th>ዋጋ</th><th>ባለቤት</th><th>ሁኔታ</th><th></th></tr></thead>
+        <tbody>
+        {% for l in page.object_list %}
+          <tr>
+            <td>{% if l.image %}<img class="mini-thumb" src="{{ l.image.url }}" alt="">{% else %}<span class="mini-thumb" aria-hidden="true">{{ l.service.icon }}</span>{% endif %}</td>
+            <td><a class="rowlink" href="{% url 'panel_listing_edit' l.pk %}">{{ l.title }}</a><br><span class="muted small">{{ l.location }}</span></td>
+            <td>{{ l.service.name }}<br><span class="tag {{ l.deal_type }}">{{ l.get_deal_type_display }}</span></td>
+            <td>{% if l.price %}{{ l.price|floatformat:0|intcomma }} ብር{% else %}—{% endif %}</td>
+            <td>{{ l.contact_name|default:"—" }}<br><span class="muted small">{{ l.contact_phone }}</span></td>
+            <td>{% if l.is_active %}<span class="badge verified">ይታያል</span>{% else %}<span class="badge unpaid">ተደብቋል</span>{% endif %}</td>
+            <td class="right" style="white-space:nowrap">
+              <a class="btn btn-ghost btn-sm" href="{% url 'panel_listing_edit' l.pk %}">አስተካክል</a>
+              <a class="btn btn-ghost btn-sm" style="color:var(--clay)" href="{% url 'panel_listing_delete' l.pk %}">አስወግድ</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "market/_pager.html" %}
+    {% else %}
+    <div class="card empty"><div class="ico">🏷️</div><p>ምንም ዝርዝር የለም። «አዲስ ዝርዝር» ን ይጫኑ።</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

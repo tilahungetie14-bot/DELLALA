@@ -1,0 +1,46 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}የደላላ ፓነል{% endblock %}
+{% block content %}
+{% include "market/_panel_nav.html" %}
+<section class="section">
+  <div class="wrap">
+    <h1 style="font-size:1.9rem">የደላላ ፓነል</h1>
+    <div class="stats" style="margin-top:1.2rem">
+      <div class="stat {% if stats.pending %}warn{% endif %}"><div class="n">{{ stats.pending }}</div><div class="l">አዲስ ጥያቄዎች</div></div>
+      <div class="stat {% if stats.to_verify %}warn{% endif %}"><div class="n">{{ stats.to_verify }}</div><div class="l">የሚረጋገጡ ክፍያዎች</div></div>
+      <div class="stat"><div class="n">{{ stats.listings }}</div><div class="l">በድረ-ገጹ ላይ ያሉ ዝርዝሮች</div></div>
+      <div class="stat"><div class="n">{{ stats.customers }}</div><div class="l">ደንበኞች</div></div>
+      <div class="stat"><div class="n">{{ stats.revenue|floatformat:0|intcomma }}</div><div class="l">የተረጋገጠ ገቢ (ብር)</div></div>
+    </div>
+
+    <div class="section-head">
+      <h2>የቅርብ ጊዜ ጥያቄዎች</h2>
+      <div class="row">
+        <a class="btn btn-ghost btn-sm" href="{% url 'panel_requests' %}">ሁሉም ጥያቄዎች</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'panel_listing_new' %}">+ አዲስ ዝርዝር</a>
+      </div>
+    </div>
+    {% if recent %}
+    <div class="card table-wrap">
+      <table class="data">
+        <thead><tr><th>ርዕስ</th><th>ደንበኛ</th><th>አገልግሎት</th><th>ክፍያ</th><th>ሁኔታ</th></tr></thead>
+        <tbody>
+        {% for req in recent %}
+          <tr>
+            <td><a class="rowlink" href="{% url 'panel_request_detail' req.pk %}">{{ req.title }}</a></td>
+            <td>{{ req.user.first_name|default:req.user.username }}</td>
+            <td>{{ req.service.name }}</td>
+            <td><span class="badge {{ req.payment_status }}">{{ req.get_payment_status_display }}</span></td>
+            <td>{% include "market/_status.html" %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="card empty"><div class="ico">📭</div><p>እስካሁን ጥያቄ አልደረሰም።</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

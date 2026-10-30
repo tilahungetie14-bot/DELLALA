@@ -1,0 +1,69 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}ጥያቄ #{{ req.pk }}{% endblock %}
+{% block content %}
+{% include "market/_panel_nav.html" %}
+<section class="section">
+  <div class="wrap">
+    <a class="small" href="{% url 'panel_requests' %}">← ወደ ጥያቄዎች</a>
+    <div class="row between" style="margin:.5rem 0 1.2rem">
+      <h1 style="font-size:1.8rem;margin:0">{{ req.title }}</h1>
+      {% include "market/_status.html" %}
+    </div>
+
+    <div class="two-col">
+      <div class="stack">
+        <div class="card pad">
+          <h3>የጥያቄው ዝርዝር</h3>
+          <dl class="kv">
+            <dt>ደንበኛ</dt><dd>{{ req.user.first_name|default:req.user.username }} ({{ req.user.username }})</dd>
+            <dt>የመገናኛ ስልክ</dt><dd><a href="tel:{{ req.contact_phone }}">{{ req.contact_phone }}</a></dd>
+            <dt>አገልግሎት</dt><dd>{{ req.service.icon }} {{ req.service.name }}</dd>
+            <dt>ፍላጎት</dt><dd>{{ req.get_intent_display }}</dd>
+            <dt>ዋጋ / በጀት</dt><dd>{% if req.price %}{{ req.price|floatformat:0|intcomma }} ብር{% else %}—{% endif %}</dd>
+            <dt>አድራሻ</dt><dd>{{ req.location|default:"—" }}</dd>
+            <dt>የተላከበት ቀን</dt><dd>{{ req.created_at|date:"d/m/Y H:i" }}</dd>
+            {% if req.description %}<dt>መግለጫ</dt><dd>{{ req.description|linebreaksbr }}</dd>{% endif %}
+          </dl>
+          {% if req.image %}<img class="proof" style="margin-top:1rem;max-height:340px" src="{{ req.image.url }}" alt="{{ req.title }}">{% endif %}
+        </div>
+
+        <div class="card pad">
+          <h3>የክፍያ መረጃ</h3>
+          <dl class="kv">
+            <dt>ክፍያ</dt><dd>{{ req.fee_amount|floatformat:0|intcomma }} ብር</dd>
+            <dt>ሁኔታ</dt><dd><span class="badge {{ req.payment_status }}">{{ req.get_payment_status_display }}</span></dd>
+            {% if req.payment_method %}<dt>የተመረጠ አማራጭ</dt><dd>{{ req.payment_method.name }}</dd>{% endif %}
+            {% if req.payment_ref %}<dt>የግብይት ቁጥር</dt><dd><b>{{ req.payment_ref }}</b></dd>{% endif %}
+          </dl>
+          {% if req.payment_proof %}
+            <p class="small muted" style="margin:1rem 0 .4rem">የደረሰኝ ፎቶ</p>
+            <a href="{{ req.payment_proof.url }}" target="_blank" rel="noopener"><img class="proof" style="max-height:340px" src="{{ req.payment_proof.url }}" alt="የክፍያ ደረሰኝ"></a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card pad">
+          <h3>ውሳኔ ይስጡ</h3>
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}{% include "market/_field.html" %}{% endfor %}
+            <p class="help" style="margin-top:-.5rem">የአስተዳዳሪ ማስታወሻ ለደንበኛው በጥያቄው ገጽ ላይ ይታያል።</p>
+            <button class="btn btn-dark btn-block" type="submit">አስቀምጥ</button>
+          </form>
+        </div>
+        <div class="card pad">
+          <h3>ወደ ድረ-ገጹ ዝርዝር ቀይር</h3>
+          <p class="muted small">የደንበኛውን መረጃ አስቀድሞ የሞላ የዝርዝር ቅጽ ይከፈታል።</p>
+          <a class="btn btn-primary btn-block" href="{% url 'panel_listing_new' %}?from_request={{ req.pk }}">+ ዝርዝር ፍጠር</a>
+          {% if listings %}
+            <p class="small" style="margin:1rem 0 .3rem"><b>ከዚህ ጥያቄ የወጡ ዝርዝሮች፦</b></p>
+            {% for l in listings %}<div class="small"><a href="{% url 'panel_listing_edit' l.pk %}">{{ l.title }}</a></div>{% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

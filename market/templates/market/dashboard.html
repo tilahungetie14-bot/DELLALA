@@ -1,0 +1,47 @@
+{% extends "market/base.html" %}
+{% load humanize %}
+{% block title %}የእኔ ገጽ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="wrap">
+    <h1 style="font-size:1.9rem">ሰላም {{ user.first_name|default:user.username }}</h1>
+    <p class="muted">የሚፈልጉትን አገልግሎት ይምረጡ፤ ዝርዝሩን ሞልተው ጥያቄ ይላኩ።</p>
+
+    <div class="grid grid-svc" style="margin:1.5rem 0 3rem">
+      {% for s in services %}
+      <a class="svc" href="{% url 'request_new' s.slug %}">
+        <div class="ico" aria-hidden="true">{{ s.icon }}</div>
+        <h3>{{ s.name }}</h3>
+        <p>{{ s.description }}</p>
+        <span class="fee">{% if s.fee %}{{ s.fee|floatformat:0|intcomma }} ብር{% else %}ነፃ{% endif %}</span>
+      </a>
+      {% endfor %}
+    </div>
+
+    <div class="section-head"><h2>የላኳቸው ጥያቄዎች</h2></div>
+    {% if my_requests %}
+    <div class="card table-wrap">
+      <table class="data">
+        <thead><tr><th>ርዕስ</th><th>አገልግሎት</th><th>ክፍያ</th><th>ሁኔታ</th><th>ቀን</th></tr></thead>
+        <tbody>
+        {% for req in my_requests %}
+          <tr>
+            <td><a class="rowlink" href="{% url 'request_detail' req.pk %}">{{ req.title }}</a></td>
+            <td>{{ req.service.name }}</td>
+            <td>
+              <span class="badge {{ req.payment_status }}">{{ req.get_payment_status_display }}</span>
+              {% if req.can_pay %}<a class="small" href="{% url 'request_pay' req.pk %}">ክፈል</a>{% endif %}
+            </td>
+            <td>{% include "market/_status.html" %}</td>
+            <td class="muted small">{{ req.created_at|date:"d/m/Y" }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="card empty"><div class="ico">📝</div><p>እስካሁን ጥያቄ አልላኩም። ከላይ አገልግሎት ይምረጡ።</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

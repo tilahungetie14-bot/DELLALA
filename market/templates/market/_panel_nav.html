@@ -1,0 +1,12 @@
+{% with url=request.resolver_match.url_name %}
+<div class="panel-nav">
+  <div class="wrap">
+    <a href="{% url 'panel_dashboard' %}" {% if url == 'panel_dashboard' %}class="active"{% endif %}>ማጠቃለያ</a>
+    <a href="{% url 'panel_requests' %}" {% if url == 'panel_requests' or url == 'panel_request_detail' %}class="active"{% endif %}>ጥያቄዎች</a>
+    <a href="{% url 'panel_listings' %}" {% if 'panel_listing' in url %}class="active"{% endif %}>ዝርዝሮች</a>
+    <a href="/admin/market/paymentmethod/">የክፍያ አማራጮች</a>
+    <a href="/admin/market/service/">አገልግሎቶችና ዋጋ</a>
+    <a href="/admin/auth/user/">ተጠቃሚዎች</a>
+  </div>
+</div>
+{% endwith %}
